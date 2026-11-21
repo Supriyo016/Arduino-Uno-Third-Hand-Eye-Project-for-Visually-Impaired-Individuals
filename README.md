@@ -67,25 +67,28 @@ The repository includes the Arduino firmware, reusable distance calculation help
 > [!NOTE]
 > The 100 cm value is the firmware's alert threshold, not a guaranteed detection range. Real sensor performance depends on the object, surface, angle, mounting, environment and power conditions.
 
-## 🖼️ Project showcase
+## 🧪 Interactive live demonstrator
+
+Explore the sensing cycle in an animated browser simulation. Move the object, change the alert threshold, inject a missing echo, and inspect the simulated serial output.
 
 <div align="center">
 
-<a href="assets/circuit-diagram.png">
-<img src="assets/circuit-diagram.png" width="90%" alt="Third Hand-Eye circuit diagram showing Arduino Uno, HC-SR04 and active buzzer connections">
+<a href="https://supriyo016.github.io/Arduino-Uno-Third-Hand-Eye-Project-for-Visually-Impaired-Individuals/demo/">
+  <img src="https://img.shields.io/badge/OPEN-Interactive%20Live%20Demo-0891B2?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Open interactive browser demonstrator">
 </a>
-
-<sub><strong>Hardware architecture</strong> · Arduino Uno, ultrasonic sensor and audible alert module</sub>
 
 <br><br>
 
-<a href="https://www.youtube.com/watch?v=xSJj8tTnAgg">
-<img src="https://img.youtube.com/vi/xSJj8tTnAgg/maxresdefault.jpg" width="84%" alt="Third Hand-Eye demonstration video thumbnail">
+<a href="https://supriyo016.github.io/Arduino-Uno-Third-Hand-Eye-Project-for-Visually-Impaired-Individuals/demo/">
+  <img src="https://capsule-render.vercel.app/api?type=rect&height=100&color=0:082F49,50:0E7490,100:164E63&text=LIVE%20ULTRASONIC%20SIMULATOR&fontColor=ECFEFF&fontSize=25&fontAlignY=55" width="88%" alt="Open animated ultrasonic sensor simulation">
 </a>
-<br>
-<sub><strong>Project demonstration</strong> · Click the preview to watch the YouTube video</sub>
+
+<sub>Browser-based simulation · No physical Arduino connection · Controls for distance, threshold and echo timeout</sub>
 
 </div>
+
+> [!NOTE]
+> This demonstrator is a software simulation based on the current firmware. It is not a live hardware feed and must not be used for navigation or safety decisions.
 
 ## ⚙️ System architecture
 
@@ -162,7 +165,7 @@ When the predicate is true, the buzzer is set HIGH for approximately 100 ms and 
 
 <div align="center">
 <img src="assets/circuit-diagram.png" width="86%" alt="Arduino Uno, HC-SR04 ultrasonic sensor and active buzzer wiring diagram">
-<br><sub>Third Hand-Eye · Circuit reference</sub>
+<br><sub>Hardware circuit reference · Shown once in this README</sub>
 </div>
 
 > [!WARNING]
@@ -320,23 +323,13 @@ Arduino-Uno-Third-Hand-Eye-Project/
 | `circuit-diagram.png` | Hardware connection diagram |
 | `project-report.pdf` | Project report and documentation |
 
-## 🎥 Demonstration and documentation
+## 🎥 Recorded demonstration and report
 
-<div align="center">
+- [Watch the recorded YouTube demonstration](https://www.youtube.com/watch?v=xSJj8tTnAgg)
+- [Open the local 480p video file](docs/demo-480p.mp4)
+- [Read the project report](docs/project-report.pdf)
 
-<a href="https://www.youtube.com/watch?v=xSJj8tTnAgg">
-<img src="https://img.youtube.com/vi/xSJj8tTnAgg/hqdefault.jpg" width="82%" alt="Watch the Third Hand-Eye project demonstration">
-</a>
-
-<br>
-<strong>▶ Watch the project demonstration</strong>
-
-<br><br>
-
-<a href="docs/demo-480p.mp4"><img src="https://img.shields.io/badge/VIDEO-Local%20480p%20demo-DC2626?style=for-the-badge&logo=googleplay&logoColor=white" alt="Local demonstration video"></a>
-<a href="docs/project-report.pdf"><img src="https://img.shields.io/badge/PDF-Project%20report-0F766E?style=for-the-badge&logo=adobeacrobatreader&logoColor=white" alt="Project report PDF"></a>
-
-</div>
+The interactive simulation is separate from the recorded physical prototype demonstration.
 
 ## ⚠️ Limitations and responsible use
 
