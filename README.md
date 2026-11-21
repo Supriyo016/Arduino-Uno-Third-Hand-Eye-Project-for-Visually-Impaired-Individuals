@@ -67,28 +67,30 @@ The repository includes the Arduino firmware, reusable distance calculation help
 > [!NOTE]
 > The 100 cm value is the firmware's alert threshold, not a guaranteed detection range. Real sensor performance depends on the object, surface, angle, mounting, environment and power conditions.
 
-## 🧪 Interactive live demonstrator
+## 🧊 Interactive 3D animated demonstrator
 
-Explore the sensing cycle in an animated browser simulation. Move the object, change the alert threshold, inject a missing echo, and inspect the simulated serial output.
+The interactive 3D-style demonstrator visualises the hardware layout and the firmware's ultrasonic sensing cycle. The scene uses layered isometric components, perspective shadows, animated sonar rings, an obstacle that moves with the selected distance, and a buzzer that responds to the alert condition.
 
 <div align="center">
 
 <a href="https://supriyo016.github.io/Arduino-Uno-Third-Hand-Eye-Project-for-Visually-Impaired-Individuals/demo/">
-  <img src="https://img.shields.io/badge/OPEN-Interactive%20Live%20Demo-0891B2?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Open interactive browser demonstrator">
+  <img src="https://img.shields.io/badge/LAUNCH-3D%20Interactive%20Demonstrator-0891B2?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Launch 3D interactive demonstrator">
 </a>
 
 <br><br>
 
 <a href="https://supriyo016.github.io/Arduino-Uno-Third-Hand-Eye-Project-for-Visually-Impaired-Individuals/demo/">
-  <img src="https://capsule-render.vercel.app/api?type=rect&height=100&color=0:082F49,50:0E7490,100:164E63&text=LIVE%20ULTRASONIC%20SIMULATOR&fontColor=ECFEFF&fontSize=25&fontAlignY=55" width="88%" alt="Open animated ultrasonic sensor simulation">
+  <img src="https://capsule-render.vercel.app/api?type=rect&height=115&color=0:05081A,35:0E7490,70:0F766E,100:312E81&text=THIRD%20HAND-EYE&fontColor=F8FAFC&fontSize=34&fontAlignY=42&desc=3D%20ULTRASONIC%20SENSING%20SIMULATOR&descAlignY=72&descSize=14" width="92%" alt="Third Hand-Eye 3D interactive demonstrator preview">
 </a>
 
-<sub>Browser-based simulation · No physical Arduino connection · Controls for distance, threshold and echo timeout</sub>
+<sub>Isometric Arduino and HC-SR04 model · Animated ultrasonic pulse · Dynamic obstacle distance · Audible-alert state visualisation</sub>
 
 </div>
 
+**Try the controls:** set object distance, adjust the threshold, choose near/boundary/far scenarios, simulate an echo timeout, and inspect the serial-monitor output.
+
 > [!NOTE]
-> This demonstrator is a software simulation based on the current firmware. It is not a live hardware feed and must not be used for navigation or safety decisions.
+> This is a browser simulation based on the repository firmware. It does not connect to a physical Arduino or read real sensor measurements.
 
 ## 🏗️ System architecture
 
