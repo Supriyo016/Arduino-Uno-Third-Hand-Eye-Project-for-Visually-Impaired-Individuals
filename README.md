@@ -398,10 +398,11 @@ The following is the **recorded demonstration of the physical prototype**. It is
 
 <div align="center">
 
-<video controls preload="metadata" width="88%" poster="https://img.youtube.com/vi/xSJj8tTnAgg/hqdefault.jpg">
-  <source src="docs/demo-480p.mp4" type="video/mp4">
-  Your browser does not support embedded video. <a href="docs/demo-480p.mp4">Open the MP4 file</a>.
-</video>
+<a href="https://www.youtube.com/watch?v=xSJj8tTnAgg">
+  <img src="https://img.youtube.com/vi/xSJj8tTnAgg/hqdefault.jpg" width="88%" alt="Preview of the recorded Third Hand-Eye hardware demonstration on YouTube">
+</a>
+<br>
+<sub>Recorded demonstration preview · Select the image to watch the physical prototype video</sub>
 
 <br><sub>Third Hand-Eye · Recorded physical prototype demonstration</sub>
 
