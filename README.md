@@ -131,22 +131,38 @@ flowchart LR
 | Serial communication | TX/RX over USB | Prints distance readings at 9600 baud |
 | Sensor supply | 5V and GND | Powers the HC-SR04 module |
 
-### 2. Firmware execution flow
+## 2. Firmware execution flow
 
-The firmware repeats the following sequence inside `loop()`. The echo measurement uses a timeout of 30,000 microseconds to prevent an indefinite wait.
+The Arduino repeats the following sequence inside `loop()`. The echo measurement has a 30,000 microsecond (30 ms) timeout, which prevents the board from waiting indefinitely if no echo arrives.
+
+### Step-by-step execution
+
+<ol>
+<li><strong>Initialise the board:</strong> <code>setup()</code> starts Serial communication at 9600 baud and sets the buzzer, trigger and echo pin modes.</li>
+<li><strong>Prepare the trigger:</strong> the trigger pin is held LOW briefly to establish a clean pulse.</li>
+<li><strong>Transmit the ultrasonic trigger:</strong> the Arduino drives D12 HIGH for 10 microseconds, then returns it to LOW.</li>
+<li><strong>Capture the echo:</strong> <code>pulseIn()</code> measures the HIGH duration on D10, with a timeout of 30,000 microseconds.</li>
+<li><strong>Calculate distance:</strong> the echo duration is passed to <code>microsecondsToCentimeters()</code>, which returns an approximate distance in centimetres. A missing echo returns zero.</li>
+<li><strong>Evaluate the alert condition:</strong> <code>shouldAlert(cm, ALERT_RANGE_CM)</code> returns true only when the distance is valid and is less than or equal to 100 cm.</li>
+<li><strong>Drive the buzzer:</strong> when the condition is true, D5 is set HIGH for about 100 ms and then LOW; the code adds a short 10 ms delay.</li>
+<li><strong>Send serial output:</strong> the distance value followed by <code>cm</code> is printed for debugging and observation.</li>
+<li><strong>Repeat the sensing cycle:</strong> after a short 10 ms delay, the loop returns to the trigger step.</li>
+</ol>
+
+### Firmware flow diagram
 
 ```mermaid
 flowchart TD
-    A([Power on]) --> B["setup(): configure pins and Serial"]
-    B --> C["Set TRIG LOW"]
-    C --> D["Send 10 µs HIGH trigger pulse"]
+    A([Power on]) --> B["setup(): Serial 9600 · configure pins"]
+    B --> C["Set TRIG D12 LOW"]
+    C --> D["Set TRIG HIGH for 10 µs"]
     D --> E["Set TRIG LOW"]
-    E --> F["pulseIn(ECHO, HIGH, 30000 µs)"]
+    E --> F["Read ECHO D10 with 30,000 µs timeout"]
     F --> G["Convert echo duration to centimetres"]
-    G --> H{"Valid distance and within threshold?"}
-    H -- "Yes" --> I["Buzzer HIGH · approx. 100 ms"]
+    G --> H{"cm > 0 and cm ≤ 100?"}
+    H -- Yes --> I["Buzzer D5 HIGH · approx. 100 ms"]
     I --> J["Buzzer LOW · approx. 10 ms"]
-    H -- "No" --> K["Keep buzzer inactive"]
+    H -- No --> K["Keep buzzer inactive"]
     J --> L["Print distance + cm"]
     K --> L
     L --> M["Delay 10 ms"]
@@ -378,11 +394,27 @@ Arduino-Uno-Third-Hand-Eye-Project/
 
 ## 🎥 Recorded demonstration and report
 
-- [Watch the recorded YouTube demonstration](https://www.youtube.com/watch?v=xSJj8tTnAgg)
-- [Open the local 480p video file](docs/demo-480p.mp4)
-- [Read the project report](docs/project-report.pdf)
+The following is the **recorded demonstration of the physical prototype**. It is separate from the interactive 3D-style browser simulation above.
 
-The interactive simulation is separate from the recorded physical prototype demonstration.
+<div align="center">
+
+<video controls preload="metadata" width="88%" poster="https://img.youtube.com/vi/xSJj8tTnAgg/hqdefault.jpg">
+  <source src="docs/demo-480p.mp4" type="video/mp4">
+  Your browser does not support embedded video. <a href="docs/demo-480p.mp4">Open the MP4 file</a>.
+</video>
+
+<br><sub>Third Hand-Eye · Recorded physical prototype demonstration</sub>
+
+<br><br>
+
+<a href="https://www.youtube.com/watch?v=xSJj8tTnAgg">Watch on YouTube</a> ·
+<a href="docs/demo-480p.mp4">Download local 480p video</a> ·
+<a href="docs/project-report.pdf">Read project report</a>
+
+</div>
+
+> [!TIP]
+> If GitHub's README renderer does not display the inline MP4 player in your browser, use the YouTube link or open the MP4 file directly.
 
 ## ⚠️ Limitations and responsible use
 
