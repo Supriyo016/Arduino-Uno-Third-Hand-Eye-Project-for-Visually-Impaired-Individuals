@@ -90,54 +90,105 @@ Explore the sensing cycle in an animated browser simulation. Move the object, ch
 > [!NOTE]
 > This demonstrator is a software simulation based on the current firmware. It is not a live hardware feed and must not be used for navigation or safety decisions.
 
-## ⚙️ System architecture
+## 🏗️ System architecture
 
-The firmware implements a continuous sensing and response cycle. It triggers the ultrasonic sensor, measures the echo duration, converts the measurement into centimetres, checks whether the distance is valid and within the alert threshold, and activates the buzzer when required.
+The system is organised into three connected layers: **hardware**, **firmware execution**, and **alert decision**. The diagrams below describe the current Arduino implementation, not planned features.
+
+### 1. Hardware architecture
+
+The Arduino Uno acts as the controller. It sends a trigger signal to the HC-SR04, measures the returning echo pulse, and drives the active buzzer when the calculated distance meets the alert condition.
+
+```mermaid
+flowchart LR
+    subgraph INPUT["Sensing layer"]
+      U["HC-SR04 ultrasonic sensor"]
+    end
+    subgraph CONTROL["Control layer · Arduino Uno"]
+      T["Trigger · D12"]
+      E["Echo input · D10"]
+      C["Distance calculation"]
+      D{"Valid distance ≤ 100 cm?"}
+    end
+    subgraph OUTPUT["Feedback layer"]
+      B["Active buzzer · D5"]
+      S["Serial Monitor · 9600 baud"]
+    end
+    T --> U
+    U -- "Echo pulse" --> E
+    E --> C --> D
+    D -- "Yes" --> B
+    D -- "No" --> S
+    B --> S
+```
+
+| Connection | Arduino Uno | Purpose |
+|---|---:|---|
+| HC-SR04 TRIG | D12 | Sends the ultrasonic trigger pulse |
+| HC-SR04 ECHO | D10 | Reads the returning echo pulse |
+| Active buzzer signal | D5 | Produces the audible alert |
+| Serial communication | TX/RX over USB | Prints distance readings at 9600 baud |
+| Sensor supply | 5V and GND | Powers the HC-SR04 module |
+
+### 2. Firmware execution flow
+
+The firmware repeats the following sequence inside `loop()`. The echo measurement uses a timeout of 30,000 microseconds to prevent an indefinite wait.
 
 ```mermaid
 flowchart TD
-    A([System starts]) --> B[Initialise Serial and I/O pins]
-    B --> C[Send 10 microsecond trigger pulse]
-    C --> D[Measure Echo pulse with 30 ms timeout]
-    D --> E[Convert pulse duration to centimetres]
-    E --> F{Valid distance greater than 0?}
-    F -- No --> G[Keep buzzer off]
-    F -- Yes --> H{Distance at or below 100 cm?}
-    H -- Yes --> I[Activate buzzer briefly]
-    H -- No --> G
-    I --> J[Print distance to Serial Monitor]
-    G --> J
-    J --> K[Short delay]
-    K --> C
+    A([Power on]) --> B["setup(): configure pins and Serial"]
+    B --> C["Set TRIG LOW"]
+    C --> D["Send 10 µs HIGH trigger pulse"]
+    D --> E["Set TRIG LOW"]
+    E --> F["pulseIn(ECHO, HIGH, 30000 µs)"]
+    F --> G["Convert echo duration to centimetres"]
+    G --> H{"Valid distance and within threshold?"}
+    H -- "Yes" --> I["Buzzer HIGH · approx. 100 ms"]
+    I --> J["Buzzer LOW · approx. 10 ms"]
+    H -- "No" --> K["Keep buzzer inactive"]
+    J --> L["Print distance + cm"]
+    K --> L
+    L --> M["Delay 10 ms"]
+    M --> C
 ```
 
-### Distance calculation
+### 3. Distance calculation and alert logic
 
-The helper function in `firmware/third_hand_eye/distance.h` uses the following conversion:
+The reusable helper in `firmware/third_hand_eye/distance.h` converts echo time into an approximate distance:
 
 ```cpp
 distance_cm = echo_microseconds / 29 / 2;
 ```
 
-The echo duration is measured in microseconds. The division by two accounts for the sound travelling to the object and returning to the sensor.
+The division by two accounts for the outward and return journeys of the sound pulse. A zero or negative duration returns zero and represents no valid echo.
 
-A duration of zero or below is treated as an invalid or missing echo and returns zero centimetres.
-
-### Alert decision
-
-The alert predicate is:
+The alert predicate is implemented as:
 
 ```cpp
 cm > 0 && cm <= alertRangeCm
 ```
 
-The current firmware configuration is:
+The current firmware uses:
 
 ```cpp
 const long ALERT_RANGE_CM = 100;
 ```
 
-When the predicate is true, the buzzer is set HIGH for approximately 100 ms and then switched LOW. The serial output is printed as a distance value in centimetres.
+<details>
+<summary><strong>Firmware behaviour at a glance</strong></summary>
+
+| Condition | Distance result | Buzzer behaviour |
+|---|---:|---|
+| No echo / timeout | 0 cm | Remains LOW |
+| Valid reading below 100 cm | Greater than 0 and below 100 | Brief audible pulse |
+| Exactly at threshold | 100 cm | Brief audible pulse |
+| Above threshold | Greater than 100 cm | Remains LOW |
+
+The buzzer is driven HIGH for approximately 100 ms and LOW for approximately 10 ms when the alert predicate is true. Serial output is printed after the alert check.
+
+</details>
+
+> [!NOTE]
+> This diagram describes the existing single-sensor firmware. It does not imply object classification, obstacle avoidance, directional detection, vibration feedback, drop-off detection, or a validated safety system.
 
 ## 🔌 Hardware and circuit connections
 
