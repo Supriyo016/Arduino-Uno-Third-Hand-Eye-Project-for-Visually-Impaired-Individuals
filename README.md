@@ -1,207 +1,206 @@
+<!-- Third Hand-Eye | Arduino assistive-technology prototype -->
+
 <div align="center">
 
-<img src="assets/banner.svg" alt="Third Hand-Eye — Arduino-based ultrasonic obstacle alert prototype" width="100%">
+<img src="assets/banner.svg" width="100%" alt="Third Hand-Eye — Arduino-based ultrasonic obstacle alert prototype">
+
+# 🦯 Third Hand-Eye
+
+### An Arduino-based ultrasonic obstacle-alert prototype
+
+**Sense a nearby obstacle · Trigger an audible alert · Monitor distance readings**
 
 <p>
-  <img src="https://img.shields.io/badge/Platform-Arduino%20Uno-00979D?style=for-the-badge&logo=arduino&logoColor=white" alt="Arduino Uno">
-  <img src="https://img.shields.io/badge/Firmware-C%2B%2B-00599C?style=for-the-badge&logo=cplusplus&logoColor=white" alt="C++">
-  <img src="https://img.shields.io/badge/Sensor-HC--SR04-0E7490?style=for-the-badge" alt="HC-SR04">
-  <img src="https://img.shields.io/badge/Prototype-Assistive%20Technology-7C3AED?style=for-the-badge" alt="Assistive technology prototype">
+<img src="https://img.shields.io/badge/Arduino-Uno-00979D?style=for-the-badge&logo=arduino&logoColor=white" alt="Arduino Uno">
+<img src="https://img.shields.io/badge/Firmware-C%2B%2B-00599C?style=for-the-badge&logo=cplusplus" alt="C++">
+<img src="https://img.shields.io/badge/Sensor-HC--SR04-0E7490?style=for-the-badge" alt="HC-SR04">
+<img src="https://img.shields.io/badge/Prototype-Assistive%20Technology-7C3AED?style=for-the-badge" alt="Assistive technology prototype">
 </p>
 
-<a href="https://github.com/Supriyo016/Arduino-Uno-Third-Hand-Eye-Project-for-Visually-Impaired-Individuals/actions/workflows/ci.yml"><img src="https://github.com/Supriyo016/Arduino-Uno-Third-Hand-Eye-Project-for-Visually-Impaired-Individuals/actions/workflows/ci.yml/badge.svg" alt="CI status"></a>
-<a href="https://github.com/Supriyo016/Arduino-Uno-Third-Hand-Eye-Project-for-Visually-Impaired-Individuals/stargazers"><img src="https://img.shields.io/github/stars/Supriyo016/Arduino-Uno-Third-Hand-Eye-Project-for-Visually-Impaired-Individuals?style=social" alt="GitHub stars"></a>
-<a href="https://github.com/Supriyo016/Arduino-Uno-Third-Hand-Eye-Project-for-Visually-Impaired-Individuals/network/members"><img src="https://img.shields.io/github/forks/Supriyo016/Arduino-Uno-Third-Hand-Eye-Project-for-Visually-Impaired-Individuals?style=social" alt="GitHub forks"></a>
+<a href="https://github.com/Supriyo016/Arduino-Uno-Third-Hand-Eye-Project-for-Visually-Impaired-Individuals/actions/workflows/ci.yml"><img src="https://github.com/Supriyo016/Arduino-Uno-Third-Hand-Eye-Project-for-Visually-Impaired-Individuals/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+<a href="https://github.com/Supriyo016/Arduino-Uno-Third-Hand-Eye-Project-for-Visually-Impaired-Individuals/stargazers"><img src="https://img.shields.io/github/stars/Supriyo016/Arduino-Uno-Third-Hand-Eye-Project-for-Visually-Impaired-Individuals?style=social" alt="Stars"></a>
+<a href="https://github.com/Supriyo016/Arduino-Uno-Third-Hand-Eye-Project-for-Visually-Impaired-Individuals/network/members"><img src="https://img.shields.io/github/forks/Supriyo016/Arduino-Uno-Third-Hand-Eye-Project-for-Visually-Impaired-Individuals?style=social" alt="Forks"></a>
 
-<h1>🦯 Third Hand-Eye</h1>
-<h3>An Arduino-based ultrasonic obstacle-alert prototype</h3>
+<a href="https://www.youtube.com/watch?v=xSJj8tTnAgg"><strong>▶ Watch demonstration</strong></a> ·
+<a href="docs/project-report.pdf"><strong>📄 Project report</strong></a> ·
+<a href="#-build-and-upload"><strong>⚙️ Build guide</strong></a>
 
-<p><strong>Sense nearby obstacles. Give an audible warning. Keep the build simple.</strong></p>
-
-<p>
-  <a href="https://www.youtube.com/watch?v=xSJj8tTnAgg"><strong>▶ Watch Demo</strong></a>
-  &nbsp;·&nbsp;
-  <a href="docs/project-report.pdf"><strong>📄 Read Project Report</strong></a>
-  &nbsp;·&nbsp;
-  <a href="#-build-and-upload"><strong>⚙️ Build Guide</strong></a>
-</p>
-
+<sub>Designed and developed by <a href="https://github.com/Supriyo016">Supriyo Sarkar</a></sub>
 </div>
 
 ---
 
-## 📌 Project Overview
+> [!WARNING]
+> **Safety and intended use:** This is an educational proof-of-concept prototype, not a certified mobility aid or a replacement for a white cane, guide dog, human assistance or other established mobility methods. It cannot detect every obstacle, surface, drop-off or hazard. Do not rely on it for independent navigation or safety-critical use.
 
-**Third Hand-Eye** is a small assistive-technology prototype built using an **Arduino Uno**, an **HC-SR04 ultrasonic distance sensor**, and an **active buzzer**.
+## 📌 Project overview
 
-The sensor measures the distance to objects in front of it. When a valid measurement is **100 cm or less**, the Arduino briefly activates the buzzer. The measured distance is also sent to the Serial Monitor for debugging.
+**Third Hand-Eye** is a low-cost embedded-systems prototype built around an **Arduino Uno**, an **HC-SR04 ultrasonic distance sensor** and an **active buzzer**.
 
-The project demonstrates a simple feedback loop using embedded hardware:
+The sensor measures the distance to objects in front of it. When a valid reading is within the configured **100 cm alert range**, the Arduino briefly activates the buzzer. The measured distance is also printed to the Serial Monitor for debugging.
 
-- **Detect:** send an ultrasonic trigger pulse and measure the echo.
-- **Calculate:** convert echo time into an approximate distance in centimetres.
-- **Alert:** activate the buzzer when an obstacle is detected within the configured range.
-- **Monitor:** print the measurement through serial communication.
+The project demonstrates a complete embedded feedback loop:
 
-> **Important:** This is an educational prototype, not a certified mobility aid. It detects only objects within the sensor's field of view and cannot reliably identify every hazard. It must not replace a white cane, guide dog, human assistance, or other established mobility methods.
+1. **Sense** — trigger the ultrasonic sensor and measure the echo duration.
+2. **Calculate** — convert the measured pulse time into an approximate distance.
+3. **Decide** — check whether the result falls within the configured alert range.
+4. **Respond** — sound the buzzer briefly when the condition is met.
+5. **Monitor** — print the reading through serial communication.
 
-## ✨ Key Features
+## ✨ Highlights
 
 <div align="center">
 <table>
-  <tr>
-    <td align="center" width="50%">
-      <h3>📡 Ultrasonic sensing</h3>
-      <sub>HC-SR04 distance measurement using echo timing</sub>
-    </td>
-    <td align="center" width="50%">
-      <h3>🔔 Audible alert</h3>
-      <sub>Active buzzer warning at or below 100 cm</sub>
-    </td>
-  </tr>
-  <tr>
-    <td align="center" width="50%">
-      <h3>🖥️ Serial monitoring</h3>
-      <sub>Live distance output at 9600 baud</sub>
-    </td>
-    <td align="center" width="50%">
-      <h3>🧪 Testable logic</h3>
-      <sub>Distance conversion and alert rules tested on a PC</sub>
-    </td>
-  </tr>
+<tr>
+<td align="center" width="50%"><h3>📡 Distance sensing</h3><sub>HC-SR04 ultrasonic echo measurement</sub></td>
+<td align="center" width="50%"><h3>🔔 Audible feedback</h3><sub>Active buzzer alert at or below 100 cm</sub></td>
+</tr>
+<tr>
+<td align="center" width="50%"><h3>⏱️ Echo timeout</h3><sub>30 ms timeout avoids a long blocking wait</sub></td>
+<td align="center" width="50%"><h3>🧪 Host-side tests</h3><sub>Core distance logic tested with standard C++</sub></td>
+</tr>
 </table>
 </div>
 
-## ⚙️ How It Works
-
-The HC-SR04 receives a short trigger pulse, emits an ultrasonic burst and raises its Echo pin for the time taken by the sound to travel to an object and return.
+## ⚙️ System workflow
 
 ```mermaid
 flowchart TD
-    A([Power on]) --> B[Initialise Arduino pins and Serial]
+    A([Power on]) --> B[Initialise pins and Serial]
     B --> C[Send 10 microsecond trigger pulse]
     C --> D[Measure Echo pulse with 30 ms timeout]
-    D --> E[Convert echo time to centimetres]
-    E --> F{Valid distance from 1 to 100 cm?}
-    F -- Yes --> G[Activate buzzer briefly]
-    F -- No --> H[Keep buzzer off]
+    D --> E[Convert echo duration to centimetres]
+    E --> F{Valid distance?}
+    F -- 1–100 cm --> G[Activate buzzer]
+    F -- No echo or over range --> H[Keep buzzer off]
     G --> I[Print distance to Serial Monitor]
     H --> I
-    I --> J[Wait briefly]
+    I --> J[Short delay]
     J --> C
 ```
 
-### Distance calculation
+### Distance conversion
 
-The firmware uses the approximate speed of sound conversion implemented in `distance.h`:
+The implementation in `firmware/third_hand_eye/distance.h` uses:
 
 [
-\text{Distance (cm)} \approx \frac{\text{Echo duration (µs)}}{29 \times 2}
+d_{cm} approx rac{t_{mu s}}{29 	imes 2}
 ]
 
-The division by two accounts for the sound travelling to the object and back. A zero or timed-out echo is treated as **no valid measurement** and does not trigger the buzzer.
+where (t_{mu s}) is the echo pulse duration in microseconds. The division by two accounts for the sound travelling to the object and returning to the sensor.
 
-### Alert condition
+A timed-out or missing echo is converted to zero and is **not** treated as a valid obstacle measurement.
+
+### Alert logic
 
 ```cpp
-cm > 0 && cm <= 100
+cm > 0 && cm <= ALERT_RANGE_CM
 ```
 
-The threshold is defined by `ALERT_RANGE_CM` in the Arduino sketch and can be changed for experimentation.
+Current threshold:
 
-## 🔌 Hardware Requirements
+```cpp
+const long ALERT_RANGE_CM = 100;
+```
 
-| Component | Quantity | Purpose |
+The buzzer is activated briefly when the condition is true.
+
+## 🔌 Hardware requirements
+
+| Component | Quantity | Function |
 |---|:---:|---|
-| Arduino Uno | 1 | Main microcontroller |
-| HC-SR04 ultrasonic sensor | 1 | Measures forward distance |
-| Active buzzer | 1 | Audible obstacle alert |
-| Jumper wires | As needed | Electrical connections |
-| 9V battery with suitable clip / supply | 1 | Prototype power source |
+| Arduino Uno | 1 | Main controller |
+| HC-SR04 ultrasonic sensor | 1 | Forward distance measurement |
+| Active buzzer module | 1 | Audible alert |
+| Jumper wires | As required | Electrical connections |
+| 9 V battery and suitable connector | 1 | Prototype power source |
 
-### Wiring connections
+### Pin mapping
 
-| Component pin | Arduino Uno pin |
-|---|---|
-| HC-SR04 VCC | 5V |
-| HC-SR04 GND | GND |
-| HC-SR04 TRIG | D12 |
-| HC-SR04 ECHO | D10 |
-| Active buzzer signal (+) | D5 |
-| Active buzzer GND (−) | GND |
+| Module | Pin | Arduino Uno |
+|---|---|---|
+| HC-SR04 | VCC | 5V |
+| HC-SR04 | GND | GND |
+| HC-SR04 | TRIG | D12 |
+| HC-SR04 | ECHO | D10 |
+| Active buzzer | Signal (+) | D5 |
+| Active buzzer | GND (−) | GND |
 
 <div align="center">
-
-<img src="assets/circuit-diagram.png" alt="Third Hand-Eye circuit diagram showing Arduino Uno, HC-SR04 ultrasonic sensor and active buzzer connections" width="85%">
-
-<sub>Hardware connection reference</sub>
-
+<img src="assets/circuit-diagram.png" width="86%" alt="Circuit wiring diagram for Arduino Uno, HC-SR04 ultrasonic sensor and active buzzer">
+<br><sub>Third Hand-Eye · Circuit diagram</sub>
 </div>
 
-> Check the pin labels and voltage requirements of your exact buzzer module before connecting it. Do not connect a bare buzzer that exceeds an Arduino pin's current rating directly to the pin; use a suitable driver circuit where required.
+> Verify the exact pin labels and electrical requirements of your buzzer module. A bare buzzer that draws more current than an Arduino GPIO pin can safely supply must use a suitable transistor/driver circuit. Check the power arrangement before connecting a battery.
 
-## 🚀 Build and Upload
+## 🚀 Build and upload
 
-### 1. Prepare the environment
+### Prerequisites
 
-Install the **Arduino IDE** or Arduino CLI and connect your Arduino Uno to the computer using USB.
+- Arduino Uno board and USB cable
+- Arduino IDE **or** Arduino CLI
+- Arduino AVR board core
 
-### 2. Upload using Arduino IDE
+### Option A — Arduino IDE
 
 1. Open `firmware/third_hand_eye/third_hand_eye.ino`.
 2. Select **Tools → Board → Arduino AVR Boards → Arduino Uno**.
-3. Select the correct serial port.
-4. Click **Upload**.
+3. Choose the correct serial port.
+4. Upload the sketch.
+5. Open Serial Monitor at **9600 baud**.
 
-### 3. Upload using Arduino CLI
+### Option B — Arduino CLI
 
-Install the Uno board core:
+Install the AVR core:
 
 ```bash
 arduino-cli core update-index
 arduino-cli core install arduino:avr
 ```
 
-Compile the sketch:
+Compile:
 
 ```bash
 arduino-cli compile --fqbn arduino:avr:uno firmware/third_hand_eye
 ```
 
-Upload it (replace `<PORT>` with your board's serial port):
+Upload (replace `<PORT>` with the serial port for your machine):
 
 ```bash
 arduino-cli upload --fqbn arduino:avr:uno -p <PORT> firmware/third_hand_eye
 ```
 
-### 4. Check the output
+### Observe the output
 
-Open the Serial Monitor at **9600 baud**. The firmware prints the measured distance in centimetres. Place a suitable object in front of the sensor and observe the buzzer response as the distance changes.
+Open Serial Monitor at **9600 baud**. The sketch prints the measured distance in centimetres. Move a suitable object in front of the sensor and observe the reading and buzzer response.
 
-## 🧪 Testing and Continuous Integration
+## 🧪 Testing and continuous integration
 
-The conversion and alert-condition functions are kept in `distance.h`, separate from Arduino-specific code. This lets the core logic be tested with a normal C++ compiler.
+The distance conversion and alert predicate are separated from Arduino-specific functions. This allows the logic to be tested with a desktop C++ compiler.
 
-Run the host-side unit tests:
+Run the tests with g++:
 
 ```bash
 g++ -std=c++17 -Wall -Wextra -Werror tests/test_distance.cpp -o test_distance
 ./test_distance
 ```
 
-The tests cover:
+The current host test cases cover:
 
-- No echo and invalid timing values.
-- Microseconds-to-centimetres conversion.
-- The alert boundary at 100 cm.
-- Measurements outside the alert range.
+- No echo / timeout handling.
+- Time-to-distance conversion.
+- The 100 cm alert boundary.
+- Readings beyond the alert range.
 
-GitHub Actions runs the host tests, compiles the sketch for Arduino Uno, and checks README links on pushes and pull requests.
+GitHub Actions runs host tests, checks the Arduino Uno sketch build and validates README links on relevant pushes and pull requests.
 
-## 🗂️ Repository Structure
+## 🗂️ Project structure
 
 ```text
-.
+Arduino-Uno-Third-Hand-Eye-Project/
+├── .github/
+│   └── workflows/
+│       └── ci.yml
 ├── assets/
 │   ├── banner.svg
 │   └── circuit-diagram.png
@@ -214,77 +213,68 @@ GitHub Actions runs the host tests, compiles the sketch for Arduino Uno, and che
 │       └── distance.h
 ├── tests/
 │   └── test_distance.cpp
-├── .github/
-│   └── workflows/
-│       └── ci.yml
 └── README.md
 ```
 
 ## 🎥 Demonstration
 
 <div align="center">
-
 <a href="https://www.youtube.com/watch?v=xSJj8tTnAgg">
-  <img src="https://img.youtube.com/vi/xSJj8tTnAgg/hqdefault.jpg" alt="Watch the Third Hand-Eye project demonstration video" width="75%">
+<img src="https://img.youtube.com/vi/xSJj8tTnAgg/hqdefault.jpg" width="78%" alt="Video thumbnail for Third Hand-Eye demonstration">
 </a>
-
-<p><strong>▶ Click the preview to watch the demonstration</strong></p>
-
-<a href="docs/demo-480p.mp4">Download / view the short demonstration clip</a>
-
+<br><strong>▶ Click the preview to watch the project demonstration</strong>
+<br><a href="docs/demo-480p.mp4">View the local 480p demonstration clip</a>
 </div>
 
-## ⚠️ Limitations and Safety
+## ⚠️ Limitations and safety considerations
 
-This project is a basic proof of concept. Its current design has important limitations:
+This prototype has a single forward-facing ultrasonic sensor and a buzzer. Its limitations include:
 
-- **Single direction:** one forward-facing sensor cannot provide complete environmental awareness.
-- **Limited field of view:** objects outside the sensor's detection cone may be missed.
-- **Material and angle sensitivity:** soft, narrow, irregular or angled surfaces may produce unreliable readings.
-- **No drop-off detection:** the current sensor arrangement does not detect stairs, holes or downward hazards.
-- **No guaranteed detection:** a missing or invalid echo does not prove that the path is clear.
-- **Audible-only feedback:** the prototype does not currently include vibration feedback or adaptive alert patterns.
+- **Restricted field of view:** objects outside the sensor's narrow detection cone can be missed.
+- **Surface sensitivity:** soft, angled or irregular surfaces can produce unreliable echoes.
+- **No drop-off detection:** stairs, holes and changes in ground level are not reliably detected.
+- **No direction or object classification:** it cannot identify object type, height, movement or safe passage.
+- **Audible-only feedback:** the design does not currently provide a vibration or tactile signal.
+- **Environmental variation:** sensor readings can be affected by mounting position and surrounding conditions.
 
-Always test the circuit in a controlled environment. Never rely on this prototype as the sole means of navigation.
+Use this device only for controlled educational experiments. Any real-world assistive device would require extensive engineering, field evaluation, redundancy, user testing, fail-safe design and relevant regulatory assessment.
 
-## 🔭 Possible Future Improvements
+## 🔭 Future improvement ideas
 
-- Add a vibration motor for tactile alerts.
-- Introduce distance-dependent beep patterns.
-- Add additional sensors for wider coverage and ground-level hazard experiments.
-- Improve enclosure design, wearable mounting and cable protection.
-- Explore rechargeable power and battery-level indication.
-- Evaluate detection reliability across different object sizes, materials and angles.
+Potential future work—not implemented in the current prototype—includes:
 
-These are possible extensions, not features of the current build.
+- Add a vibration motor and configurable audio/tactile alerts.
+- Vary alert cadence based on measured distance.
+- Add additional sensors with carefully validated coverage.
+- Improve filtering and invalid-echo handling.
+- Design a safe, wearable enclosure and power system.
+- Conduct structured usability and reliability testing.
+
+## 📚 Project resources
+
+| Resource | Link |
+|---|---|
+| Source code | [Repository](https://github.com/Supriyo016/Arduino-Uno-Third-Hand-Eye-Project-for-Visually-Impaired-Individuals) |
+| Firmware | [Arduino sketch](firmware/third_hand_eye/third_hand_eye.ino) |
+| Circuit | [Circuit diagram](assets/circuit-diagram.png) |
+| Report | [Project report PDF](docs/project-report.pdf) |
+| Demo | [YouTube demonstration](https://www.youtube.com/watch?v=xSJj8tTnAgg) |
+| Workflow | [GitHub Actions CI](.github/workflows/ci.yml) |
 
 ## 👨‍💻 Author
 
 <div align="center">
-
-<strong>Supriyo Sarkar</strong>
-
-Computer Science & Engineering · Embedded Systems Enthusiast
-
-<a href="https://github.com/Supriyo016"><img src="https://img.shields.io/badge/GitHub-Supriyo016-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"></a>
-<a href="https://www.linkedin.com/in/supriyo-sarkar/"><img src="https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn"></a>
-<a href="https://developerbro.vercel.app"><img src="https://img.shields.io/badge/Portfolio-Visit-0E7490?style=for-the-badge&logo=vercel&logoColor=white" alt="Portfolio"></a>
-
+<a href="https://github.com/Supriyo016"><img src="https://img.shields.io/badge/Designed%20and%20developed%20by-Supriyo%20Sarkar-0E7490?style=for-the-badge&logo=github" alt="Supriyo Sarkar"></a>
+<br>
+<a href="https://www.linkedin.com/in/supriyo-sarkar/"><img src="https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=for-the-badge&logo=linkedin" alt="LinkedIn"></a>
+<a href="https://github.com/Supriyo016"><img src="https://img.shields.io/badge/GitHub-Supriyo016-181717?style=for-the-badge&logo=github" alt="GitHub"></a>
+<br><sub>Computer Science & Engineering · Embedded Systems · Assistive Technology</sub>
 </div>
-
-## 📜 Project Resources
-
-- [Source code](firmware/third_hand_eye/third_hand_eye.ino)
-- [Project report](docs/project-report.pdf)
-- [Circuit diagram](assets/circuit-diagram.png)
-- [YouTube demonstration](https://www.youtube.com/watch?v=xSJj8tTnAgg)
-- [Short demo clip](docs/demo-480p.mp4)
-- [GitHub Actions](.github/workflows/ci.yml)
 
 ---
 
 <div align="center">
-
-<sub>Designed as an educational embedded-systems project with accessibility in mind.</sub>
-
+<sub>Educational prototype · Verify wiring and test in a controlled environment.</sub>
+<br><br>
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:0E7490,55:0F766E,100:172554&height=100&section=footer" width="100%" alt="">
 </div>
