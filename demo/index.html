@@ -1,314 +1,147 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#071521">
-  <meta name="description" content="Interactive browser simulation of the Third Hand-Eye Arduino Uno and HC-SR04 ultrasonic obstacle alert prototype.">
-  <title>Third Hand-Eye | Interactive Demonstrator</title>
-  <style>
-    :root {
-      color-scheme: dark;
-      --bg:#071521; --panel:#0d2231; --panel2:#102b3c; --line:#20465a;
-      --text:#e7f4f7; --muted:#9bb5c0; --cyan:#22d3ee; --green:#34d399;
-      --amber:#fbbf24; --red:#fb7185; --blue:#60a5fa;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
-    * { box-sizing:border-box }
-    body { margin:0; min-height:100vh; color:var(--text); background:radial-gradient(ellipse at 15% 0%,#10364a 0,transparent 44%),radial-gradient(ellipse at 90% 15%,#20224b 0,transparent 38%),var(--bg); }
-    button,input { font:inherit }
-    button { cursor:pointer }
-    .shell { max-width:1240px; margin:auto; padding:26px 20px 48px }
-    header { display:flex; align-items:center; justify-content:space-between; gap:18px; margin-bottom:22px }
-    .brand { display:flex; align-items:center; gap:13px }
-    .logo { width:46px; height:46px; border-radius:14px; display:grid; place-items:center; background:linear-gradient(145deg,#0e7490,#164e63); box-shadow:0 8px 30px #0005; font-size:25px }
-    h1 { font-size:clamp(24px,4vw,36px); margin:0; letter-spacing:-1px }
-    .sub { color:var(--muted); margin-top:5px; font-size:13px }
-    .pill { border:1px solid #236174; border-radius:999px; padding:8px 12px; color:#a5f3fc; background:#08334499; font-size:12px; white-space:nowrap }
-    .notice { border:1px solid #8a6824; background:#3b2d103d; color:#f9e7b0; border-radius:14px; padding:13px 16px; font-size:13px; line-height:1.5; margin-bottom:18px }
-    .notice strong { color:#fde68a }
-    .grid { display:grid; grid-template-columns:minmax(0,1.5fr) minmax(285px,.9fr); gap:16px }
-    .panel { border:1px solid var(--line); background:linear-gradient(155deg,#102a3aee,#091b29f2); border-radius:18px; padding:18px; box-shadow:0 16px 42px #0002 }
-    .panel h2 { font-size:16px; margin:0 0 15px }
-    .visual { min-height:370px; position:relative; overflow:hidden; background:linear-gradient(180deg,#0b2637,#081a27); border:1px solid #1e4659; border-radius:14px }
-    .visual svg { display:block; width:100%; height:auto; min-height:350px }
-    .scan { stroke:var(--cyan); stroke-width:2; fill:none; stroke-dasharray:7 9; opacity:.9; animation:scan 1.3s linear infinite }
-    .wave { stroke:#22d3ee; stroke-width:2.5; fill:none; opacity:0; transform-origin:340px 170px; animation:ping 2.2s ease-out infinite }
-    .wave.w2 { animation-delay:.75s } .wave.w3 { animation-delay:1.5s }
-    .pulse { animation:pulse .85s ease-in-out infinite }
-    @keyframes scan { to { stroke-dashoffset:-32 } }
-    @keyframes ping { 0% { opacity:0; transform:scale(.7) } 18% { opacity:.85 } 100% { opacity:0; transform:scale(1.6) } }
-    @keyframes pulse { 50% { opacity:.35; filter:drop-shadow(0 0 10px var(--amber)) } }
-    .caption { display:flex; justify-content:space-between; gap:10px; color:var(--muted); font-size:12px; margin:10px 2px 0 }
-    .metric-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:13px }
-    .metric { background:#0a1e2b; border:1px solid #18394b; border-radius:12px; padding:12px }
-    .metric label { display:block; color:var(--muted); font-size:11px; margin-bottom:7px }
-    .metric output { font-size:21px; font-weight:750; font-variant-numeric:tabular-nums }
-    .state { color:var(--green) }
-    .state.alert { color:var(--amber) }
-    .state.invalid { color:var(--red) }
-    .controls { display:grid; gap:16px }
-    .control-block { padding-bottom:14px; border-bottom:1px solid #1d3c4c }
-    .control-block:last-child { border-bottom:0; padding-bottom:0 }
-    .control-head { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:10px }
-    .control-head label { font-size:13px; font-weight:650 }
-    .value { color:#a5f3fc; font-size:13px; font-variant-numeric:tabular-nums }
-    input[type=range] { width:100%; accent-color:var(--cyan) }
-    .range-scale { display:flex; justify-content:space-between; color:#7794a1; font-size:10px }
-    .button-row { display:flex; flex-wrap:wrap; gap:8px }
-    .btn { border:1px solid #2b5368; border-radius:10px; padding:9px 12px; background:#112f42; color:var(--text); font-size:12px; font-weight:650 }
-    .btn:hover { border-color:var(--cyan); background:#164057 }
-    .btn.primary { background:#0e7490; border-color:#0891b2 }
-    .btn.danger { border-color:#7f3846; background:#40202a }
-    .btn[aria-pressed=true] { border-color:var(--cyan); box-shadow:inset 0 0 0 1px var(--cyan); color:#a5f3fc }
-    .toggle { display:flex; align-items:center; justify-content:space-between; color:var(--muted); font-size:12px; gap:14px }
-    .toggle input { width:18px; height:18px; accent-color:var(--cyan) }
-    .serial { margin-top:16px }
-    .serial-screen { background:#030b11; border:1px solid #1b394a; border-radius:12px; padding:12px; height:142px; overflow:auto; color:#86efac; font:12px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace }
-    .serial-line { white-space:pre-wrap }
-    .serial-line .time { color:#547382 }
-    .legend { display:flex; flex-wrap:wrap; gap:13px; color:var(--muted); font-size:11px; margin-top:11px }
-    .dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:5px; background:var(--green) }
-    .dot.alert { background:var(--amber) } .dot.bad { background:var(--red) }
-    .bottom { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:16px }
-    .step { border:1px solid #1e4052; background:#0b1d2a; border-radius:13px; padding:14px }
-    .step b { display:block; margin:6px 0 4px; font-size:13px }
-    .step p { margin:0; color:var(--muted); font-size:12px; line-height:1.5 }
-    .step .n { font-size:11px; color:#67e8f9; letter-spacing:1px }
-    footer { text-align:center; margin-top:23px; color:#76929f; font-size:11px; line-height:1.7 }
-    a { color:#67e8f9 }
-    @media(max-width:850px) { .grid { grid-template-columns:1fr } .bottom { grid-template-columns:1fr } }
-    @media(max-width:560px) { .shell { padding:18px 12px 32px } header { align-items:flex-start } .pill { white-space:normal; text-align:center; max-width:120px } .panel { padding:13px } .metric-grid { gap:6px } .metric { padding:9px } .metric output { font-size:17px } .visual,.visual svg { min-height:270px } }
-    @media(prefers-reduced-motion:reduce) { *,*::before,*::after { animation-duration:.01ms!important; animation-iteration-count:1!important; scroll-behavior:auto!important } }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#05081a">
+<meta name="description" content="Interactive 3D-style simulation of the Third Hand-Eye Arduino Uno and HC-SR04 obstacle alert prototype.">
+<title>Third Hand-Eye | 3D Interactive Demonstrator</title>
+<style>
+:root{color-scheme:dark;--bg:#050b17;--panel:#0a1b2b;--line:#1a4358;--cyan:#22d3ee;--teal:#0e7490;--mint:#34d399;--amber:#fbbf24;--red:#fb7185;--ink:#e6f3f7;--muted:#96b1bf;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;color:var(--ink);background:radial-gradient(ellipse at 17% 0,#10364a 0,transparent 43%),radial-gradient(ellipse at 90% 20%,#25214e 0,transparent 38%),var(--bg)}
+button,input{font:inherit}button{cursor:pointer}.shell{max-width:1320px;margin:auto;padding:24px 20px 50px}
+header{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:20px}.brand{display:flex;align-items:center;gap:14px}.logo{height:48px;width:48px;display:grid;place-items:center;border-radius:15px;background:linear-gradient(145deg,#0891b2,#164e63);box-shadow:0 12px 30px #0006;font-size:26px}h1{font-size:clamp(25px,4vw,38px);margin:0;letter-spacing:-1.2px}.sub{font-size:13px;color:var(--muted);margin-top:4px}.tag{font-size:11px;color:#a5f3fc;border:1px solid #236174;background:#08334499;padding:8px 12px;border-radius:999px;white-space:nowrap}
+.notice{border:1px solid #8a6824;background:#3b2d103d;color:#f9e7b0;border-radius:14px;padding:13px 16px;font-size:13px;line-height:1.55;margin-bottom:16px}.notice strong{color:#fde68a}
+.layout{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(290px,.85fr);gap:16px}.panel{border:1px solid var(--line);border-radius:18px;background:linear-gradient(155deg,#102a3aee,#081725f5);padding:17px;box-shadow:0 18px 48px #0004}.panel h2{font-size:16px;margin:0 0 13px}.stage{position:relative;overflow:hidden;border:1px solid #214c62;border-radius:14px;background:radial-gradient(ellipse at 53% 42%,#123b50,#071521 69%);min-height:405px}
+.scene{display:block;width:100%;height:auto;min-height:400px}.float{animation:float 4.5s ease-in-out infinite;transform-box:fill-box;transform-origin:center}.boardShadow{filter:drop-shadow(0 24px 15px #0009)}.wave{fill:none;stroke:#22d3ee;stroke-width:3;opacity:0;transform-box:fill-box;transform-origin:center;animation:sonar 2.4s ease-out infinite}.wave.delay1{animation-delay:.8s}.wave.delay2{animation-delay:1.6s}.glint{animation:glint 2s ease-in-out infinite}.buzzer-active{animation:buzz .7s steps(2,end) infinite;filter:drop-shadow(0 0 12px #fbbf24)}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}@keyframes sonar{0%{opacity:0;transform:scale(.65)}15%{opacity:.9}100%{opacity:0;transform:scale(1.7)}}@keyframes glint{0%,100%{opacity:.25}50%{opacity:1}}@keyframes buzz{50%{opacity:.35}}
+.stage-meta{display:flex;justify-content:space-between;gap:10px;color:var(--muted);font-size:11px;margin:10px 2px 0}.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:13px}.metric{padding:11px;border:1px solid #1c4052;background:#081a28;border-radius:12px}.metric label{display:block;font-size:10px;color:var(--muted);margin-bottom:7px}.metric output{font-size:20px;font-weight:760;font-variant-numeric:tabular-nums}.good{color:var(--mint)}.warn{color:var(--amber)}.bad{color:var(--red)}
+.controls{display:grid;gap:15px}.group{padding-bottom:14px;border-bottom:1px solid #1d3c4c}.group:last-child{padding-bottom:0;border:0}.ghead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px}.ghead label{font-size:13px;font-weight:650}.value{font-size:13px;color:#a5f3fc;font-variant-numeric:tabular-nums}input[type=range]{width:100%;accent-color:var(--cyan)}.scale{display:flex;justify-content:space-between;color:#7794a1;font-size:10px}.buttons{display:flex;flex-wrap:wrap;gap:7px}.btn{border:1px solid #2b5368;border-radius:10px;padding:9px 11px;background:#112f42;color:var(--ink);font-size:12px;font-weight:650}.btn:hover{border-color:var(--cyan);background:#164057}.btn.primary{background:#0e7490;border-color:#0891b2}.btn.danger{border-color:#7f3846;background:#40202a}.toggle{display:flex;align-items:center;justify-content:space-between;gap:12px;color:var(--muted);font-size:12px}.toggle input{width:18px;height:18px;accent-color:var(--cyan)}
+.serial{margin-top:16px}.serial-screen{height:137px;overflow:auto;padding:12px;border:1px solid #1c3d4f;border-radius:12px;background:#020a10;color:#86efac;font:12px/1.65 ui-monospace,Consolas,monospace}.line{white-space:pre-wrap}.time{color:#537384}.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin-top:10px}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;background:var(--mint)}.dot.warn{background:var(--amber)}.dot.bad{background:var(--red)}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-top:15px}.step{padding:13px;border:1px solid #1e4052;background:#091c2a;border-radius:13px}.num{font-size:10px;color:#67e8f9;letter-spacing:1px}.step b{display:block;font-size:13px;margin:6px 0 4px}.step p{font-size:11px;color:var(--muted);line-height:1.5;margin:0}.foot{text-align:center;color:#76929f;font-size:11px;line-height:1.8;margin-top:23px}.foot a{color:#67e8f9}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.steps{grid-template-columns:1fr}}@media(max-width:560px){.shell{padding:16px 11px 32px}header{align-items:flex-start}.tag{white-space:normal;text-align:center;max-width:120px}.panel{padding:12px}.stage{min-height:270px}.scene{min-height:270px}.metrics{gap:6px}.metric{padding:8px}.metric output{font-size:16px}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important}}
+</style>
 </head>
 <body>
-  <main class="shell">
-    <header>
-      <div class="brand">
-        <div class="logo" aria-hidden="true">🦯</div>
-        <div>
-          <h1>Third Hand-Eye</h1>
-          <div class="sub">Interactive ultrasonic obstacle-alert demonstrator</div>
-        </div>
-      </div>
-      <div class="pill">SIMULATION MODE · NO HARDWARE LINK</div>
-    </header>
-
-    <div class="notice" role="note">
-      <strong>Important:</strong> This is an interactive software simulation of the current Arduino prototype. It does not connect to an Arduino or measure a real object. It is for understanding and demonstration only—not a mobility aid or a safety device.
-    </div>
-
-    <section class="grid" aria-label="Live simulator">
-      <div class="panel">
-        <h2>📡 Ultrasonic sensing field</h2>
-        <div class="visual">
-          <svg viewBox="0 0 760 360" role="img" aria-labelledby="sceneTitle sceneDesc">
-            <title id="sceneTitle">Animated ultrasonic sensor and detected object</title>
-            <desc id="sceneDesc">A simulated Arduino and ultrasonic sensor send animated waves towards a movable obstacle. The wave cone and obstacle position change with the distance control.</desc>
-            <defs>
-              <linearGradient id="beam" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#22d3ee" stop-opacity=".27"/><stop offset="1" stop-color="#22d3ee" stop-opacity=".015"/></linearGradient>
-              <linearGradient id="board" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#0e7490"/><stop offset="1" stop-color="#164e63"/></linearGradient>
-              <filter id="glow"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-            </defs>
-            <g opacity=".17" stroke="#3c7388" stroke-width="1">
-              <path d="M0 60H760M0 120H760M0 180H760M0 240H760M0 300H760"/>
-              <path d="M80 0V360M160 0V360M240 0V360M320 0V360M400 0V360M480 0V360M560 0V360M640 0V360M720 0V360"/>
-            </g>
-            <path d="M340 170 L720 62 L720 278 Z" fill="url(#beam)" id="beam"/>
-            <path d="M340 170L720 62M340 170L720 278" class="scan" id="scanTop"/>
-            <g id="sensorRig">
-              <rect x="35" y="115" width="180" height="110" rx="12" fill="url(#board)" stroke="#2dd4bf" stroke-opacity=".45"/>
-              <rect x="56" y="134" width="55" height="26" rx="4" fill="#cbd5e1"/>
-              <rect x="129" y="133" width="65" height="55" rx="6" fill="#082f49"/>
-              <path d="M60 184H190M60 198H170" stroke="#9bd4dc" stroke-opacity=".55" stroke-width="3"/>
-              <text x="125" y="216" text-anchor="middle" fill="#d8f5f5" font-size="12" font-weight="700">ARDUINO UNO</text>
-              <path d="M215 170H282" stroke="#fbbf24" stroke-width="3"/>
-              <rect x="282" y="132" width="92" height="76" rx="12" fill="#1e40af" stroke="#60a5fa"/>
-              <circle cx="310" cy="170" r="23" fill="#dbeafe" stroke="#64748b" stroke-width="5"/>
-              <circle cx="346" cy="170" r="23" fill="#dbeafe" stroke="#64748b" stroke-width="5"/>
-              <circle cx="310" cy="170" r="8" fill="#64748b"/><circle cx="346" cy="170" r="8" fill="#64748b"/>
-              <text x="328" y="230" text-anchor="middle" fill="#9bb5c0" font-size="11">HC-SR04</text>
-            </g>
-            <g id="waves" filter="url(#glow)">
-              <path d="M340 136Q390 170 340 204" class="wave"/>
-              <path d="M340 120Q420 170 340 220" class="wave w2"/>
-              <path d="M340 105Q450 170 340 235" class="wave w3"/>
-            </g>
-            <g id="obstacle" transform="translate(590 170)">
-              <rect x="-17" y="-37" width="34" height="74" rx="7" fill="#fbbf24" stroke="#fde68a" stroke-width="2"/>
-              <path d="M-10 -21H10M-10 -9H10M-10 3H10M-10 15H10" stroke="#92400e" stroke-width="3" stroke-linecap="round"/>
-              <circle cy="-48" r="5" fill="#fde68a"/>
-            </g>
-            <text x="38" y="35" fill="#9bb5c0" font-size="12">SENSOR UNIT</text>
-            <text id="distanceLabel" x="590" y="105" text-anchor="middle" fill="#fde68a" font-size="14" font-weight="700">75 cm</text>
-            <text x="38" y="330" fill="#7393a2" font-size="11">SIMULATED ECHO PATH · NOT TO SCALE</text>
-            <g id="buzzerIcon" transform="translate(98 78)">
-              <path d="M0 0H14L28 -12V12L14 0Z" fill="#64748b"/>
-              <path id="soundArc1" d="M34 -10Q49 0 34 10" fill="none" stroke="#fbbf24" stroke-width="2" opacity="0"/>
-              <path id="soundArc2" d="M42 -17Q66 0 42 17" fill="none" stroke="#fbbf24" stroke-width="2" opacity="0"/>
-              <text x="72" y="4" fill="#9bb5c0" font-size="11">BUZZER</text>
-            </g>
-            <text id="sceneStatus" x="700" y="330" text-anchor="end" fill="#34d399" font-size="12" font-weight="700">CLEAR ZONE</text>
-          </svg>
-        </div>
-        <div class="caption">
-          <span>HC-SR04 ultrasonic pulse visualisation</span>
-          <span id="scanState">Scanning…</span>
-        </div>
-        <div class="metric-grid">
-          <div class="metric"><label>SIMULATED DISTANCE</label><output id="distanceOut">75 cm</output></div>
-          <div class="metric"><label>DETECTION STATE</label><output id="statusOut" class="state alert">ALERT ZONE</output></div>
-          <div class="metric"><label>BUZZER OUTPUT</label><output id="buzzerOut">PULSE</output></div>
-        </div>
-      </div>
-
-      <aside class="panel">
-        <h2>🎛️ Simulation controls</h2>
-        <div class="controls">
-          <div class="control-block">
-            <div class="control-head"><label for="distance">Object distance</label><output class="value" id="distanceValue">75 cm</output></div>
-            <input id="distance" type="range" min="5" max="250" step="1" value="75">
-            <div class="range-scale"><span>5 cm · Very close</span><span>250 cm · Far</span></div>
-          </div>
-          <div class="control-block">
-            <div class="control-head"><label>Quick scenarios</label><span class="value">Choose a test case</span></div>
-            <div class="button-row">
-              <button class="btn" data-distance="20">20 cm · Near</button>
-              <button class="btn" data-distance="75">75 cm · Alert</button>
-              <button class="btn" data-distance="100">100 cm · Boundary</button>
-              <button class="btn" data-distance="150">150 cm · Clear</button>
-              <button class="btn" data-distance="250">250 cm · Far</button>
-            </div>
-          </div>
-          <div class="control-block">
-            <div class="control-head"><label for="threshold">Alert threshold</label><output class="value" id="thresholdValue">100 cm</output></div>
-            <input id="threshold" type="range" min="20" max="200" step="5" value="100">
-            <div class="range-scale"><span>20 cm</span><span>200 cm</span></div>
-          </div>
-          <div class="control-block">
-            <div class="control-head"><label for="timeout">Simulate missing echo</label><span class="value">Invalid reading</span></div>
-            <label class="toggle"><span>Enable echo timeout (30 ms)</span><input id="timeout" type="checkbox"></label>
-          </div>
-          <div class="control-block">
-            <div class="control-head"><label for="auto">Automatic scan</label><span class="value" id="autoLabel">Running</span></div>
-            <label class="toggle"><span>Move the simulated object automatically</span><input id="auto" type="checkbox" checked></label>
-          </div>
-          <div class="control-block">
-            <div class="button-row">
-              <button class="btn primary" id="start">▶ Start simulation</button>
-              <button class="btn" id="pause">Ⅱ Pause</button>
-              <button class="btn danger" id="reset">↺ Reset</button>
-            </div>
-          </div>
-        </div>
-      </aside>
-    </section>
-
-    <section class="panel serial">
-      <h2>⌨️ Simulated Serial Monitor <span class="pill" style="float:right">9600 BAUD</span></h2>
-      <div class="serial-screen" id="serial" aria-live="polite" aria-label="Simulated Arduino serial output">
-        <div class="serial-line"><span class="time">[BOOT]</span> Third Hand-Eye simulation started</div>
-        <div class="serial-line"><span class="time">[INFO]</span> Serial Monitor · 9600 baud</div>
-        <div class="serial-line"><span class="time">[INFO]</span> Alert threshold = 100 cm</div>
-      </div>
-      <div class="legend">
-        <span><i class="dot"></i> Outside threshold</span>
-        <span><i class="dot alert"></i> Alert predicate true</span>
-        <span><i class="dot bad"></i> No valid echo</span>
-      </div>
-    </section>
-
-    <section class="bottom" aria-label="How the prototype works">
-      <div class="step"><span class="n">01 / SENSE</span><b>Send an ultrasonic pulse</b><p>The Arduino gives the HC-SR04 a 10 microsecond trigger pulse.</p></div>
-      <div class="step"><span class="n">02 / CALCULATE</span><b>Convert echo time to distance</b><p>Firmware uses microseconds ÷ 29 ÷ 2. A missing echo is treated as zero.</p></div>
-      <div class="step"><span class="n">03 / RESPOND</span><b>Check the configured threshold</b><p>The buzzer predicate is true only when the measured distance is greater than zero and at or below the threshold.</p></div>
-    </section>
-
-    <footer>
-      Software simulation based on the current repository firmware. It does not connect to a real Arduino.<br>
-      Educational demonstrator only · Not a certified assistive device · Never use for navigation or personal safety.<br>
-      <a href="https://github.com/Supriyo016/Arduino-Uno-Third-Hand-Eye-Project-for-Visually-Impaired-Individuals">Source repository</a>
-    </footer>
-  </main>
-  <script>
-    (() => {
-      const $ = (id) => document.getElementById(id);
-      const distance = $("distance"), threshold = $("threshold"), timeout = $("timeout"), auto = $("auto");
-      const object = $("obstacle"), label = $("distanceLabel"), beam = $("beam");
-      const statusOut = $("statusOut"), buzzerOut = $("buzzerOut"), serial = $("serial");
-      let running = true, current = Number(distance.value), direction = 1, lastLog = 0, tick = 0, timer;
-      const clamp = (n,min,max) => Math.max(min,Math.min(max,n));
-      const valid = () => !timeout.checked;
-      const isAlert = () => valid() && current > 0 && current <= Number(threshold.value);
-      function addLog(message, kind="INFO") {
-        const line = document.createElement("div");
-        line.className = "serial-line";
-        const now = new Date();
-        const stamp = now.toLocaleTimeString();
-        const time = document.createElement("span");
-        time.className = "time"; time.textContent = "[" + stamp + "] ";
-        line.append(time, document.createTextNode(kind + " " + message));
-        serial.append(line);
-        while (serial.children.length > 45) serial.removeChild(serial.firstChild);
-        serial.scrollTop = serial.scrollHeight;
-      }
-      function render(log=true) {
-        const limit = Number(threshold.value);
-        const alert = isAlert();
-        const invalid = !valid();
-        const x = 380 + ((current - 5) / 245) * 300;
-        object.setAttribute("transform", "translate(" + x.toFixed(0) + " 170)");
-        label.setAttribute("x", x.toFixed(0));
-        label.textContent = invalid ? "NO ECHO" : current + " cm";
-        beam.setAttribute("opacity", alert ? ".95" : ".42");
-        $("distanceOut").textContent = invalid ? "—" : current + " cm";
-        $("distanceValue").textContent = invalid ? "No echo" : current + " cm";
-        $("thresholdValue").textContent = limit + " cm";
-        $("distance").value = current;
-        $("scanState").textContent = running ? "Scanning…" : "Paused";
-        $("sceneStatus").textContent = invalid ? "ECHO TIMEOUT" : alert ? "OBSTACLE ALERT" : "CLEAR ZONE";
-        $("sceneStatus").setAttribute("fill", invalid ? "#fb7185" : alert ? "#fbbf24" : "#34d399");
-        statusOut.textContent = invalid ? "NO ECHO" : alert ? "ALERT ZONE" : "CLEAR";
-        statusOut.className = "state " + (invalid ? "invalid" : alert ? "alert" : "");
-        buzzerOut.textContent = invalid ? "OFF" : alert ? "PULSE" : "OFF";
-        buzzerOut.className = alert ? "state alert" : "state";
-        $("soundArc1").setAttribute("opacity", alert ? "1" : "0");
-        $("soundArc2").setAttribute("opacity", alert ? ".75" : "0");
-        $("buzzerIcon").classList.toggle("pulse",alert);
-        $("autoLabel").textContent = auto.checked ? "Running" : "Manual";
-        if (log && Date.now() - lastLog > 650) {
-          addLog(invalid ? "0cm  // echo timeout after 30 ms" : current + "cm" + (alert ? "  // ALERT: buzzer HIGH for ~100 ms" : "  // buzzer LOW"));
-          lastLog = Date.now();
-        }
-      }
-      function frame() {
-        if (!running) return;
-        tick++;
-        if (auto.checked && tick % 3 === 0) {
-          current += direction * 3;
-          if (current >= 245) { current = 245; direction = -1; }
-          if (current <= 8) { current = 8; direction = 1; }
-        }
-        render();
-      }
-      function start() { running = true; $("scanState").textContent = "Scanning…"; }
-      function pause() { running = false; $("scanState").textContent = "Paused"; }
-      distance.addEventListener("input", () => { current = Number(distance.value); auto.checked = false; render(); });
-      threshold.addEventListener("input", () => render());
-      timeout.addEventListener("change", () => { addLog(timeout.checked ? "Echo timeout injected for demonstration" : "Echo input restored"); render(); });
-      auto.addEventListener("change", () => { $("autoLabel").textContent = auto.checked ? "Running" : "Manual"; });
-      document.querySelectorAll("[data-distance]").forEach((button) => button.addEventListener("click", () => { current = Number(button.dataset.distance); auto.checked = false; render(); }));
-      $("start").addEventListener("click", () => { start(); addLog("Simulation resumed"); });
-      $("pause").addEventListener("click", () => { pause(); addLog("Simulation paused"); });
-      $("reset").addEventListener("click", () => {
-        current = 75; direction = 1; tick = 0; threshold.value = 100; timeout.checked = false; auto.checked = true; start(); render(false); addLog("Simulation reset to 75 cm; threshold 100 cm");
-      });
-      render(false);
-      addLog("Demo values are simulated; no serial hardware is connected");
-      timer = window.setInterval(frame, 220);
-      window.addEventListener("pagehide", () => window.clearInterval(timer), {once:true});
-    })();
-  </script>
+<main class="shell">
+<header><div class="brand"><div class="logo" aria-hidden="true">🦯</div><div><h1>Third Hand-Eye</h1><div class="sub">3D animated ultrasonic obstacle-alert demonstrator</div></div></div><div class="tag">SIMULATION MODE · NO HARDWARE LINK</div></header>
+<div class="notice"><strong>Simulation notice:</strong> This interactive 3D-style scene represents the current Arduino prototype. It does not communicate with a physical board or measure real objects. It is an educational visualisation, not a mobility aid or safety system.</div>
+<section class="layout" aria-label="3D simulator and controls">
+<div class="panel"><h2>🧩 3D hardware and ultrasonic sensing scene</h2>
+<div class="stage">
+<svg class="scene" viewBox="0 0 900 470" role="img" aria-labelledby="title desc">
+<title id="title">Isometric 3D-style Third Hand-Eye hardware simulation</title><desc id="desc">A raised Arduino Uno board connected by coloured wires to an ultrasonic sensor and buzzer. Animated sonar waves reach an adjustable obstacle in front of the sensor.</desc>
+<defs>
+ <linearGradient id="boardTop" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0ea5a8"/><stop offset="1" stop-color="#07536b"/></linearGradient>
+ <linearGradient id="boardSide" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#06445b"/><stop offset="1" stop-color="#032d42"/></linearGradient>
+ <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f1f5f9"/><stop offset=".45" stop-color="#94a3b8"/><stop offset="1" stop-color="#475569"/></linearGradient>
+ <linearGradient id="objectMat" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fde68a"/><stop offset="1" stop-color="#d97706"/></linearGradient>
+ <radialGradient id="halo"><stop stop-color="#22d3ee" stop-opacity=".27"/><stop offset="1" stop-color="#22d3ee" stop-opacity="0"/></radialGradient>
+ <filter id="shadow"><feGaussianBlur stdDeviation="12"/></filter>
+ <filter id="neon"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<g opacity=".16" stroke="#4e91a8"><path d="M0 80H900M0 160H900M0 240H900M0 320H900M0 400H900"/><path d="M90 0V470M180 0V470M270 0V470M360 0V470M450 0V470M540 0V470M630 0V470M720 0V470M810 0V470"/></g>
+<ellipse cx="450" cy="355" rx="360" ry="75" fill="#000" opacity=".45" filter="url(#shadow)"/>
+<ellipse cx="575" cy="220" rx="290" ry="200" fill="url(#halo)" id="sonarHalo"/>
+<!-- 3D Arduino board -->
+<g class="float boardShadow" transform="translate(65 215)">
+ <path d="M0 28L210 -45L395 26L180 105Z" fill="url(#boardSide)" stroke="#0b8997" stroke-width="2"/>
+ <path d="M0 0L210 -73L395 -2L180 75Z" fill="url(#boardTop)" stroke="#4dd0ca" stroke-width="2"/>
+ <path d="M0 0L0 28L180 105L180 75Z" fill="#06465b"/>
+ <path d="M180 75L395 -2L395 26L180 105Z" fill="#06384d"/>
+ <path d="M35 5L84 -13L124 2L75 20Z" fill="#cbd5e1" stroke="#64748b"/>
+ <path d="M35 5L35 27L75 42L75 20Z" fill="#64748b"/>
+ <path d="M75 20L124 2L124 24L75 42Z" fill="#475569"/>
+ <path d="M162 -25L235 -49L284 -30L210 -4Z" fill="#092536" stroke="#67e8f9"/>
+ <path d="M162 -25L162 11L210 30L210 -4Z" fill="#0f172a"/>
+ <path d="M210 -4L284 -30L284 6L210 30Z" fill="#111827"/>
+ <path d="M305 -5L350 -20L373 -11L328 5Z" fill="#0f172a"/>
+ <path d="M305 -5L305 14L328 23L328 5Z" fill="#020617"/>
+ <g fill="#facc15"><circle cx="20" cy="6" r="4"/><circle cx="37" cy="13" r="4"/><circle cx="54" cy="20" r="4"/><circle cx="71" cy="27" r="4"/><circle cx="88" cy="34" r="4"/></g>
+ <g fill="#e2e8f0"><circle cx="12" cy="-5" r="5"/><circle cx="180" cy="-65" r="5"/><circle cx="370" cy="-4" r="5"/></g>
+ <g stroke="#a7f3d0" stroke-width="3" opacity=".75" fill="none"><path d="M110 34L151 18L174 27"/><path d="M260 37L303 20L322 28"/></g>
+ <text x="195" y="57" fill="#d9fbff" font-size="17" font-weight="800" text-anchor="middle">ARDUINO UNO</text>
+ <text x="195" y="73" fill="#a5f3fc" font-size="9" text-anchor="middle">ATmega328P · 5V LOGIC</text>
+</g>
+<!-- jumper wires in perspective -->
+<g fill="none" stroke-linecap="round" stroke-width="5">
+ <path d="M437 239C485 202 465 126 527 117" stroke="#f43f5e"/>
+ <path d="M446 246C497 220 493 152 535 139" stroke="#22d3ee"/>
+ <path d="M455 252C511 244 509 181 545 166" stroke="#facc15"/>
+ <path d="M430 258C472 280 488 314 536 322" stroke="#34d399"/>
+</g>
+<!-- HC-SR04 3D block -->
+<g class="float" style="animation-delay:-1s" transform="translate(530 75)">
+ <path d="M0 24L140 -8L191 13L52 47Z" fill="#1e3a8a" stroke="#60a5fa"/>
+ <path d="M0 24V109L52 132V47Z" fill="#172554"/>
+ <path d="M52 47L191 13V94L52 132Z" fill="#1e40af" stroke="#60a5fa"/>
+ <ellipse cx="82" cy="53" rx="27" ry="19" fill="#0b1225" stroke="#93c5fd" stroke-width="4"/>
+ <ellipse cx="82" cy="53" rx="18" ry="12" fill="url(#metal)"/>
+ <ellipse cx="158" cy="34" rx="27" ry="19" fill="#0b1225" stroke="#93c5fd" stroke-width="4"/>
+ <ellipse cx="158" cy="34" rx="18" ry="12" fill="url(#metal)"/>
+ <path d="M52 132L191 94V107L52 146Z" fill="#0f1c49"/>
+ <text x="112" y="119" fill="#dbeafe" font-size="11" font-weight="700" text-anchor="middle">HC-SR04</text>
+ <text x="112" y="133" fill="#bfdbfe" font-size="8" text-anchor="middle">TRIG D12 · ECHO D10</text>
+</g>
+<!-- sonar waves originating around sensor face -->
+<g id="sonarWaves" filter="url(#neon)" transform="translate(625 128)">
+ <ellipse class="wave" cx="0" cy="0" rx="52" ry="38"/>
+ <ellipse class="wave delay1" cx="0" cy="0" rx="75" ry="55"/>
+ <ellipse class="wave delay2" cx="0" cy="0" rx="102" ry="75"/>
+</g>
+<!-- obstacle block, positioned by distance -->
+<g id="obstacle" transform="translate(780 184)">
+ <ellipse cx="0" cy="64" rx="34" ry="12" fill="#000" opacity=".4" filter="url(#shadow)"/>
+ <path d="M-25 5L2 -8L27 3V70L0 83L-25 70Z" fill="url(#objectMat)" stroke="#fde68a" stroke-width="2"/>
+ <path d="M2 -8L27 3L0 16L-25 5Z" fill="#fef3c7"/>
+ <path d="M0 16L27 3V70L0 83Z" fill="#b45309"/>
+ <path d="M-15 23L-15 59M-6 19L-6 63" stroke="#92400e" stroke-width="3" opacity=".7"/>
+ <circle cx="0" cy="-20" r="5" fill="#fde68a" class="glint"/>
+</g>
+<text x="780" y="135" id="distanceLabel" fill="#fde68a" text-anchor="middle" font-size="17" font-weight="800">75 cm</text>
+<text x="780" y="270" id="objectCaption" fill="#cbd5e1" text-anchor="middle" font-size="11">DETECTED OBJECT</text>
+<!-- buzzer 3D indicator -->
+<g id="buzzer" transform="translate(260 90)">
+ <path d="M0 8L18 0L38 9V48L20 58L0 48Z" fill="#334155" stroke="#94a3b8"/>
+ <path d="M0 8L20 18L38 9L18 0Z" fill="#64748b"/>
+ <path d="M20 18V58" stroke="#0f172a" stroke-width="2"/>
+ <path d="M-15 21L-1 27V43L-15 49Z" fill="#1e293b"/>
+ <path id="buzzerRing1" d="M48 15Q65 29 48 43" fill="none" stroke="#fbbf24" stroke-width="3" opacity="0"/>
+ <path id="buzzerRing2" d="M57 6Q83 29 57 52" fill="none" stroke="#fbbf24" stroke-width="3" opacity="0"/>
+ <text x="19" y="77" text-anchor="middle" fill="#cbd5e1" font-size="11">ACTIVE BUZZER</text>
+</g>
+<text x="30" y="34" fill="#9bb5c0" font-size="12" letter-spacing="1.5">ISOMETRIC HARDWARE VIEW</text>
+<text x="30" y="54" fill="#5f879a" font-size="10">ILLUSTRATIVE MODEL · NOT TO SCALE</text>
+<text id="sceneState" x="870" y="438" text-anchor="end" font-size="12" font-weight="800" fill="#34d399">CLEAR ZONE</text>
+</svg>
+</div>
+<div class="stage-meta"><span>Isometric hardware visualisation · Animated ultrasonic pulse</span><span id="scanState">AUTO SCAN ACTIVE</span></div>
+<div class="metrics">
+<div class="metric"><label>SIMULATED DISTANCE</label><output id="distanceOut">75 cm</output></div>
+<div class="metric"><label>DETECTION STATE</label><output id="statusOut" class="warn">ALERT ZONE</output></div>
+<div class="metric"><label>BUZZER OUTPUT</label><output id="buzzerOut" class="warn">PULSE</output></div>
+</div>
+</div>
+<aside class="panel"><h2>🎛️ Simulation controls</h2><div class="controls">
+<div class="group"><div class="ghead"><label for="distance">Object distance</label><output id="distanceValue" class="value">75 cm</output></div><input id="distance" type="range" min="5" max="250" value="75"><div class="scale"><span>5 cm · Near</span><span>250 cm · Far</span></div></div>
+<div class="group"><div class="ghead"><label>Quick scenarios</label><span class="value">Choose case</span></div><div class="buttons"><button class="btn" data-distance="20">20 cm · Near</button><button class="btn" data-distance="75">75 cm · Alert</button><button class="btn" data-distance="100">100 cm · Edge</button><button class="btn" data-distance="150">150 cm · Clear</button><button class="btn" data-distance="250">250 cm · Far</button></div></div>
+<div class="group"><div class="ghead"><label for="threshold">Alert threshold</label><output id="thresholdValue" class="value">100 cm</output></div><input id="threshold" type="range" min="20" max="200" step="5" value="100"><div class="scale"><span>20 cm</span><span>200 cm</span></div></div>
+<div class="group"><div class="ghead"><label for="timeout">Missing echo</label><span class="value">30 ms timeout</span></div><label class="toggle"><span>Inject invalid echo reading</span><input id="timeout" type="checkbox"></label></div>
+<div class="group"><div class="ghead"><label for="auto">Automatic object movement</label><span id="autoLabel" class="value">ON</span></div><label class="toggle"><span>Move obstacle across scan field</span><input id="auto" type="checkbox" checked></label></div>
+<div class="group"><div class="buttons"><button class="btn primary" id="start">▶ Start</button><button class="btn" id="pause">Ⅱ Pause</button><button class="btn danger" id="reset">↺ Reset</button></div></div>
+</div></aside></section>
+<section class="panel serial"><h2>⌨️ Simulated Serial Monitor <span class="tag" style="float:right">9600 BAUD</span></h2><div class="serial-screen" id="serial" aria-live="polite"><div class="line"><span class="time">[BOOT]</span> Third Hand-Eye simulator initialised</div><div class="line"><span class="time">[INFO]</span> Serial Monitor · 9600 baud</div><div class="line"><span class="time">[INFO]</span> Alert threshold = 100 cm</div></div><div class="legend"><span><i class="dot"></i> Clear</span><span><i class="dot warn"></i> Alert predicate true</span><span><i class="dot bad"></i> Invalid echo</span></div></section>
+<section class="steps"><div class="step"><span class="num">01 · TRANSMIT</span><b>Trigger the HC-SR04</b><p>The firmware sends a 10 microsecond trigger pulse to the sensor on D12.</p></div><div class="step"><span class="num">02 · MEASURE</span><b>Read echo duration</b><p>Echo pulse time is captured on D10 with a 30 ms timeout, then converted to centimetres.</p></div><div class="step"><span class="num">03 · ALERT</span><b>Activate the buzzer</b><p>If the reading is valid and within the configured threshold, D5 goes HIGH briefly.</p></div></section>
+<footer class="foot">Browser simulation based on the repository firmware. It does not connect to a physical Arduino.<br>Educational demonstrator only · Not a certified assistive device · Never use for navigation or personal safety.<br><a href="https://github.com/Supriyo016/Arduino-Uno-Third-Hand-Eye-Project-for-Visually-Impaired-Individuals">View source repository</a></footer>
+</main>
+<script>
+(()=>{const $=id=>document.getElementById(id);const distance=$("distance"),threshold=$("threshold"),timeout=$("timeout"),auto=$("auto"),object=$("obstacle");let current=75,direction=1,running=true,tick=0,lastLog=0,timer;
+const alert=()=>!timeout.checked&&current>0&&current<=Number(threshold.value);
+function log(message){const el=document.createElement("div");el.className="line";const t=document.createElement("span");t.className="time";t.textContent="["+new Date().toLocaleTimeString()+"] ";el.append(t,document.createTextNode(message));const serial=$("serial");serial.append(el);while(serial.children.length>45)serial.firstChild.remove();serial.scrollTop=serial.scrollHeight}
+function render(writeLog=true){const invalid=timeout.checked,active=alert(),x=650+((current-5)/245)*205;object.setAttribute("transform","translate("+x.toFixed(0)+" 184)");$("distanceLabel").setAttribute("x",x.toFixed(0));$("distanceLabel").textContent=invalid?"NO ECHO":current+" cm";$("objectCaption").setAttribute("x",x.toFixed(0));$("objectCaption").textContent=invalid?"INVALID ECHO":"DETECTED OBJECT";$("distanceOut").textContent=invalid?"—":current+" cm";$("distanceValue").textContent=invalid?"No echo":current+" cm";$("thresholdValue").textContent=threshold.value+" cm";distance.value=current;$("statusOut").textContent=invalid?"NO ECHO":active?"ALERT ZONE":"CLEAR";$("statusOut").className=invalid?"bad":active?"warn":"good";$("buzzerOut").textContent=active?"PULSE":"OFF";$("buzzerOut").className=active?"warn":"good";$("sceneState").textContent=invalid?"ECHO TIMEOUT":active?"OBSTACLE ALERT":"CLEAR ZONE";$("sceneState").setAttribute("fill",invalid?"#fb7185":active?"#fbbf24":"#34d399");$("buzzer").classList.toggle("buzzer-active",active);$("buzzerRing1").setAttribute("opacity",active?"1":"0");$("buzzerRing2").setAttribute("opacity",active?".8":"0");$("sonarHalo").setAttribute("opacity",active?"1":".55");$("scanState").textContent=running?"AUTO SCAN ACTIVE":"SCAN PAUSED";$("autoLabel").textContent=auto.checked?"ON":"OFF";
+if(writeLog&&Date.now()-lastLog>650){log(invalid?"0cm // echo timeout after 30 ms":current+"cm // "+(active?"ALERT: buzzer HIGH for ~100 ms":"buzzer LOW"));lastLog=Date.now()}}
+function frame(){if(!running)return;tick++;if(auto.checked&&tick%3===0){current+=direction*3;if(current>=245){current=245;direction=-1}if(current<=8){current=8;direction=1}}render()}
+distance.addEventListener("input",()=>{current=Number(distance.value);auto.checked=false;render()});threshold.addEventListener("input",()=>render());timeout.addEventListener("change",()=>{log(timeout.checked?"Echo timeout injected":"Echo input restored");render()});auto.addEventListener("change",()=>render());document.querySelectorAll("[data-distance]").forEach(b=>b.addEventListener("click",()=>{current=Number(b.dataset.distance);auto.checked=false;render()}));$("start").addEventListener("click",()=>{running=true;log("Simulation resumed")});$("pause").addEventListener("click",()=>{running=false;render(false);log("Simulation paused")});$("reset").addEventListener("click",()=>{current=75;direction=1;tick=0;threshold.value=100;timeout.checked=false;auto.checked=true;running=true;render(false);log("Simulation reset · 75 cm · threshold 100 cm")});render(false);log("All readings are simulated · No serial hardware connected");timer=setInterval(frame,220);window.addEventListener("pagehide",()=>clearInterval(timer),{once:true})})();
+</script>
 </body>
 </html>
