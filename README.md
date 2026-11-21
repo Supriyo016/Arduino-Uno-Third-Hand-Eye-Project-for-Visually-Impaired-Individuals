@@ -18,14 +18,15 @@
 </p>
 
 <a href="https://github.com/Supriyo016/Arduino-Uno-Third-Hand-Eye-Project-for-Visually-Impaired-Individuals/actions/workflows/ci.yml"><img src="https://github.com/Supriyo016/Arduino-Uno-Third-Hand-Eye-Project-for-Visually-Impaired-Individuals/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-<a href="https://github.com/Supriyo016/Arduino-Uno-Third-Hand-Eye-Project-for-Visually-Impaired-Individuals/stargazers"><img src="https://img.shields.io/github/stars/Supriyo016/Arduino-Uno-Third-Hand-Eye-Project-for-Visually-Impaired-Individuals?style=social" alt="Stars"></a>
-<a href="https://github.com/Supriyo016/Arduino-Uno-Third-Hand-Eye-Project-for-Visually-Impaired-Individuals/network/members"><img src="https://img.shields.io/github/forks/Supriyo016/Arduino-Uno-Third-Hand-Eye-Project-for-Visually-Impaired-Individuals?style=social" alt="Forks"></a>
+<a href="https://img.shields.io/github/stars/Supriyo016/Arduino-Uno-Third-Hand-Eye-Project-for-Visually-Impaired-Individuals?style=social"><img src="https://img.shields.io/github/stars/Supriyo016/Arduino-Uno-Third-Hand-Eye-Project-for-Visually-Impaired-Individuals?style=social" alt="Stars"></a>
+<a href="https://img.shields.io/github/forks/Supriyo016/Arduino-Uno-Third-Hand-Eye-Project-for-Visually-Impaired-Individuals?style=social"><img src="https://img.shields.io/github/forks/Supriyo016/Arduino-Uno-Third-Hand-Eye-Project-for-Visually-Impaired-Individuals?style=social" alt="Forks"></a>
 
 <a href="https://www.youtube.com/watch?v=xSJj8tTnAgg"><strong>▶ Watch demonstration</strong></a> ·
 <a href="docs/project-report.pdf"><strong>📄 Project report</strong></a> ·
 <a href="#-build-and-upload"><strong>⚙️ Build guide</strong></a>
 
 <sub>Designed and developed by <a href="https://github.com/Supriyo016">Supriyo Sarkar</a></sub>
+<br><sub>See also: <a href="https://developerbro.vercel.app">DeveloperBro Academic Portfolio</a> · <a href="https://github.com/Supriyo016/TourIndia/tree/rebuild/nextjs">Tour India</a></sub>
 </div>
 
 ---
@@ -83,11 +84,11 @@ flowchart TD
 
 The implementation in `firmware/third_hand_eye/distance.h` uses:
 
-[
-d_{cm} approx rac{t_{mu s}}{29 	imes 2}
-]
+```text
+distance_cm = echo_microseconds / 29 / 2
+```
 
-where (t_{mu s}) is the echo pulse duration in microseconds. The division by two accounts for the sound travelling to the object and returning to the sensor.
+where the echo duration is measured in microseconds. Division by two accounts for the sound travelling to the object and returning to the sensor.
 
 A timed-out or missing echo is converted to zero and is **not** treated as a valid obstacle measurement.
 
@@ -185,8 +186,7 @@ g++ -std=c++17 -Wall -Wextra -Werror tests/test_distance.cpp -o test_distance
 ./test_distance
 ```
 
-The current host test cases cover:
-
+The host test cases cover:
 - No echo / timeout handling.
 - Time-to-distance conversion.
 - The 100 cm alert boundary.
@@ -242,7 +242,6 @@ Use this device only for controlled educational experiments. Any real-world assi
 ## 🔭 Future improvement ideas
 
 Potential future work—not implemented in the current prototype—includes:
-
 - Add a vibration motor and configurable audio/tactile alerts.
 - Vary alert cadence based on measured distance.
 - Add additional sensors with carefully validated coverage.
@@ -269,6 +268,7 @@ Potential future work—not implemented in the current prototype—includes:
 <a href="https://www.linkedin.com/in/supriyo-sarkar/"><img src="https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=for-the-badge&logo=linkedin" alt="LinkedIn"></a>
 <a href="https://github.com/Supriyo016"><img src="https://img.shields.io/badge/GitHub-Supriyo016-181717?style=for-the-badge&logo=github" alt="GitHub"></a>
 <br><sub>Computer Science & Engineering · Embedded Systems · Assistive Technology</sub>
+<br><sub>More projects: <a href="https://developerbro.vercel.app">DeveloperBro</a> · <a href="https://tour-india-pi.vercel.app">Tour India</a></sub>
 </div>
 
 ---
