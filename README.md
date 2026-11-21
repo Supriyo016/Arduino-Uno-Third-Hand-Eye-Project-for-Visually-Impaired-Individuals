@@ -127,21 +127,18 @@ The Arduino repeats the following sequence inside `loop()`. The echo measurement
 ### Firmware flow diagram
 
 ```mermaid
-flowchart TD
-    A([Power on]) --> B["setup(): Serial 9600 · configure pins"]
-    B --> C["Set TRIG D12 LOW"]
-    C --> D["Set TRIG HIGH for 10 µs"]
-    D --> E["Set TRIG LOW"]
-    E --> F["Read ECHO D10 with 30,000 µs timeout"]
-    F --> G["Convert echo duration to centimetres"]
-    G --> H{"cm > 0 and cm ≤ 100?"}
-    H -- Yes --> I["Buzzer D5 HIGH · approx. 100 ms"]
-    I --> J["Buzzer LOW · approx. 10 ms"]
-    H -- No --> K["Keep buzzer inactive"]
-    J --> L["Print distance + cm"]
-    K --> L
-    L --> M["Delay 10 ms"]
-    M --> C
+flowchart LR
+    A([Start]) --> B["Initialise Serial and pins"]
+    B --> C["Trigger HC-SR04 · D12"]
+    C --> D["Read echo · D10<br/>30 ms timeout"]
+    D --> E["Calculate distance"]
+    E --> F{"Valid and ≤ 100 cm?"}
+    F -- Yes --> G["Buzzer pulse · D5"]
+    F -- No --> H["Buzzer off"]
+    G --> I["Print distance"]
+    H --> I
+    I --> J["10 ms delay"]
+    J --> C
 ```
 
 ### 3. Distance calculation and alert logic
