@@ -361,25 +361,6 @@ The following items are possible future research and engineering directions. The
 - [ ] Expand hardware-in-the-loop and environmental test coverage.
 - [ ] Conduct supervised usability and reliability evaluation.
 
-## 🌐 Project ecosystem
-
-This project is part of a wider collection of academic, software and engineering work.
-
-| Project | Focus | Explore |
-|---|---|---|
-| **DeveloperBro.** | Academic portfolio, research case studies and technical notes | [Live portfolio](https://developerbro.vercel.app) · [Repository](https://github.com/Supriyo016/DeveloperBro-Academic-Portfolio) |
-| **Tour India** | Travel discovery, cultural information and itinerary planning | [Live platform](https://tour-india-pi.vercel.app) · [Repository](https://github.com/Supriyo016/TourIndia/tree/rebuild/nextjs) |
-| **Third Hand-Eye** | Arduino-based ultrasonic obstacle-alert prototype | [This repository](https://github.com/Supriyo016/Arduino-Uno-Third-Hand-Eye-Project-for-Visually-Impaired-Individuals) |
-
-<div align="center">
-<a href="https://developerbro.vercel.app">
-<img src="https://img.shields.io/badge/DeveloperBro-Academic%20Portfolio-3730A3?style=for-the-badge&logo=vercel&logoColor=white" alt="DeveloperBro academic portfolio">
-</a>
-<a href="https://tour-india-pi.vercel.app">
-<img src="https://img.shields.io/badge/Tour%20India-Travel%20Platform-0F766E?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Tour India">
-</a>
-</div>
-
 ## 📬 Project owner
 
 <div align="center">
@@ -409,6 +390,6 @@ This project is part of a wider collection of academic, software and engineering
 
 <br><br>
 
-<img src="https://capsule-render.vercel.app/api?type=waving&height=150&color=0:071A2B,28:0E7490,62:0F766E,100:312E81&section=footer&text=SENSE%20%E2%80%A2%20MEASURE%20%E2%80%A2%20ALERT&fontColor=F8FAFC&fontSize=22&fontAlignY=66" width="100%" alt="Third Hand-Eye animated footer">
+<img src="https://capsule-render.vercel.app/api?type=waving&height=170&color=0:071A2B,28:0E7490,62:0F766E,100:312E81&section=footer&text=SEE%20THE%20UNSEEN%20%E2%80%A2%20SENSE%20WITH%20SOUND&fontColor=F8FAFC&fontSize=24&fontAlignY=64&animation=fadeIn" width="100%" alt="Third Hand-Eye animated footer with the tagline See the unseen, sense with sound">
 
 </div>
