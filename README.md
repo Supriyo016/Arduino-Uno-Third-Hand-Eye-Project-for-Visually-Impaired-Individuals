@@ -3,7 +3,7 @@
 <div align="center">
 
 <a href="https://github.com/Supriyo016/Arduino-Uno-Third-Hand-Eye-Project-for-Visually-Impaired-Individuals">
-<img src="https://capsule-render.vercel.app/api?type=waving&height=245&color=0:071A2B,28:0E7490,62:0F766E,100:312E81&text=THIRD%20HAND-EYE&fontColor=F8FAFC&fontSize=58&fontAlignY=35&desc=EMBEDDED%20SYSTEMS%20%E2%80%A2%20ULTRASONIC%20SENSING%20%E2%80%A2%20ASSISTIVE%20TECHNOLOGY&descAlignY=58&descSize=15&animation=fadeIn" width="100%" alt="Third Hand-Eye — Embedded Systems, Ultrasonic Sensing and Assistive Technology">
+<img src="assets/banner.svg" width="100%" alt="Third Hand-Eye — Arduino ultrasonic obstacle alert prototype">
 </a>
 
 # 🦯 Third Hand-Eye
@@ -66,31 +66,6 @@ The repository includes the Arduino firmware, reusable distance calculation help
 
 > [!NOTE]
 > The 100 cm value is the firmware's alert threshold, not a guaranteed detection range. Real sensor performance depends on the object, surface, angle, mounting, environment and power conditions.
-
-## 🧊 Interactive 3D animated demonstrator
-
-The interactive 3D-style demonstrator visualises the hardware layout and the firmware's ultrasonic sensing cycle. The scene uses layered isometric components, perspective shadows, animated sonar rings, an obstacle that moves with the selected distance, and a buzzer that responds to the alert condition.
-
-<div align="center">
-
-<a href="https://supriyo016.github.io/Arduino-Uno-Third-Hand-Eye-Project-for-Visually-Impaired-Individuals/demo/">
-  <img src="https://img.shields.io/badge/LAUNCH-3D%20Interactive%20Demonstrator-0891B2?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Launch 3D interactive demonstrator">
-</a>
-
-<br><br>
-
-<a href="https://supriyo016.github.io/Arduino-Uno-Third-Hand-Eye-Project-for-Visually-Impaired-Individuals/demo/">
-  <img src="https://capsule-render.vercel.app/api?type=rect&height=115&color=0:05081A,35:0E7490,70:0F766E,100:312E81&text=THIRD%20HAND-EYE&fontColor=F8FAFC&fontSize=34&fontAlignY=42&desc=3D%20ULTRASONIC%20SENSING%20SIMULATOR&descAlignY=72&descSize=14" width="92%" alt="Third Hand-Eye 3D interactive demonstrator preview">
-</a>
-
-<sub>Isometric Arduino and HC-SR04 model · Animated ultrasonic pulse · Dynamic obstacle distance · Audible-alert state visualisation</sub>
-
-</div>
-
-**Try the controls:** set object distance, adjust the threshold, choose near/boundary/far scenarios, simulate an echo timeout, and inspect the serial-monitor output.
-
-> [!NOTE]
-> This is a browser simulation based on the repository firmware. It does not connect to a physical Arduino or read real sensor measurements.
 
 ## 🏗️ System architecture
 
